@@ -352,3 +352,22 @@ section .option_list .option.selected {
   background: #7204b3;
   border: 1px solid #c3e6cb;
 }
+
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  min-height: 10vh;
+  background-color: rgb(22, 26, 65);
+  color: azure;
+
+}
+
+.nav-link {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  list-style: none;
+
+}
