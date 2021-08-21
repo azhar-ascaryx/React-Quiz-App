@@ -1,13 +1,12 @@
 import React from "react";
 import firebase from "../firebase";
 import { useState } from "react";
-
+import "../Assets/Css/App.css";
 
 const Signin = (props) => {
-
   const [phone, setphone] = useState("");
   const [otp, setotp] = useState("");
-
+  const [otpSent, setOtpSent] = useState(false);
 
   const verifyOtp = (e) => {
     e.preventDefault();
@@ -18,26 +17,24 @@ const Signin = (props) => {
       .then((result) => {
         // User signed in successfully.
         const user = result.user;
-        console.log(user, "qqqqqqqq");
-        window.location.replace("/home")
+        console.log(user);
+        window.location.replace("/home");
 
         // ...
       })
       .catch((error) => {
         // User couldn't sign in (bad verification code?)
         // ...
-        console.log(error);
+        alert(error.message);
       });
   };
 
   const onChangePhone = (e) => {
     e.preventDefault();
-    console.log(e.target.value);
 
     setphone(e.target.value);
   };
 
-  console.log(phone);
   const onChangeOtp = (e) => {
     e.preventDefault();
 
@@ -51,7 +48,6 @@ const Signin = (props) => {
         size: "invisible",
         callback: (response) => {
           // reCAPTCHA solved, allow signInWithPhoneNumber.
-          console.log(response);
           onSignInSubmit();
         },
         defaultCountry: "IN",
@@ -60,7 +56,6 @@ const Signin = (props) => {
   };
   const onSignInSubmit = (e) => {
     const phoneNumber = "+91" + phone;
-    console.log(phoneNumber);
     e.preventDefault();
     configureCaptcha();
 
@@ -72,36 +67,80 @@ const Signin = (props) => {
         // SMS sent. Prompt user to type the code from the message, then sign the
         // user in with confirmationResult.confirm(code).
         window.confirmationResult = confirmationResult;
-        console.log("azhar");
+        setOtpSent(true);
         // ...
       })
       .catch((error) => {
         // Error; SMS not sent
         // ...
-        console.log(error)
+        alert(error.message);
       });
   };
   return (
-    <div>
-       <form onSubmit={(e) => onSignInSubmit(e)}>
-     <div id="sign-in-button"></div>
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+      }}
+    >
+      {!otpSent ? (
+        <form
+          className="form-align"
+          style={{ paddingBottom: "25px" }}
+          onSubmit={(e) => onSignInSubmit(e)}
+        >
+          <div id="sign-in-button"></div>
           <label>Phone Number: </label>
-          <input value={ phone} onChange={(e) =>  onChangePhone(e)} type="text" className="number_input" placeholder="Enter your Mobile number"/>
-    <button type={"submit"}>Generate OTP</button>
-     </form>
-
-     <form onSubmit={(e) =>  verifyOtp(e)}>
-     <div id="sign-in-button"></div>
-     <label>OTP</label>
           <input
-          value={ otp} onChange={(e) =>  onChangeOtp(e)}
+            value={phone}
+            onChange={(e) => onChangePhone(e)}
+            type="text"
+            className="number_input"
+            placeholder="Enter your Mobile number"
+          />
+          <div className="buttons">
+            <button
+              type={"submit"}
+              style={{
+                backgroundColor: "#fff",
+                color: "#000",
+                padding: "10px",
+                marginTop: 10,
+              }}
+            >
+              Generate OTP
+            </button>
+          </div>
+        </form>
+      ) : (
+        <form className="form-align" onSubmit={(e) => verifyOtp(e)}>
+          <div id="sign-in-button"></div>
+          <label>OTP</label>
+          <input
+            value={otp}
+            onChange={(e) => onChangeOtp(e)}
             type="number"
             placeholder="Enter the OTP"
             className="email_input"
           />
-    <button type={"submit"}>Submit</button>
-     </form>
-        
+          <div className="buttons">
+            <button
+              type={"submit"}
+              style={{
+                backgroundColor: "#fff",
+                color: "#000",
+                padding: "10px",
+                marginTop: 10,
+              }}
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
